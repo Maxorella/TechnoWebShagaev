@@ -1,0 +1,38 @@
+#mybrand {
+  color: red;
+}
+
+.startqsect{
+    margin-top: 100px;
+}
+.question{
+ border: 2px solid black;
+  margin-top: 30px;
+  border-radius: 10px;
+  padding: 20px;
+
+}
+.pictmark {
+    object-fit: scale-down;
+  max-width: 10px;
+  max-height: 10px;
+}
+
+.profpicture{
+    object-fit: scale-down;
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.quest_topic{
+     border-bottom: 2px solid black;
+}
+
+.questavatar {
+  object-fit: contain;
+}
+
+.your_answ_sect{
+         border-top: 2px solid black;
+
+}
