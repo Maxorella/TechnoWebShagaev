@@ -1,0 +1,29 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+        <div class="col-9">
+
+            <div class="row mt-5">
+            </div>
+
+            {% include 'components/curquestiontemplate.html' %}
+
+
+            {% for answer in answers %}
+            {% include 'components/soloanswertemplate.html' %}
+            {% endfor %}
+
+
+
+            <div class="row mt-3">
+
+                <div class="row your_answ_sect text-center">
+                    <span>Type your answer</span>
+                </div>
+                <div class="row mt-2">
+                    <!-- konkret question -->
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+
+                </div>
+            </div>
+        </div>
+{% endblock %}

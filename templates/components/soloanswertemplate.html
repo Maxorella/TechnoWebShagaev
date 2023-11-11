@@ -1,0 +1,50 @@
+<!-- konkret question -->
+<div class="row question mt-4">
+
+    <div class="col-2">
+        <div class="row mt-4">
+            <img class="questavatar" src="../static/img/quest-avatar.png" width="50" height="50" alt="">
+        </div>
+        <div class="row row-cols-2 mt-4">
+            <div class="col-3">
+                <button type="button" class="btn btn-outline-success btn-sm">
+                    <img class="pictmark" width="10" height="10" src="../static/img/keyup.png" alt="#"/>
+                </button>
+            </div>
+            <div class="col-9 mt-4">
+                <!--как выравнивать текст?? -->
+                <span class="text-center">2232</span>
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-outline-danger btn-sm">
+                    <img class="pictmark" width="10" height="10" src="../static/img/keydown.png" alt="#"/>
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-10">
+        <div class="row">
+            <!--sam vopros-->
+            <a class="text-center  quest_name" href="/question/{{question.id}}">{{ answer.title }}</a>
+        </div>
+
+        <div class="row sect-text">
+            <!--sam vopros-->
+            <span> {{ answer.content }}</span>
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+
+                <a class="go_answ" href="#"> answer</a>
+            </div>
+            <div class="col-10">
+                <span class="tags-st">Tags: </span>
+                <a href="#" class="quest-tag"> tag1</a> <a href="#" class="quest-tag"> tag2</a> <a
+                    href="#" class="quest-tag"> tag3</a>
+            </div>
+        </div>
+
+    </div>
+</div>

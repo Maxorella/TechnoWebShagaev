@@ -1,0 +1,22 @@
+{% extends 'layouts/layout.html' %}
+{% block content %}
+<div class="row mt-5">
+    <div class="col-4">
+        <a href="#" class="title-text"> {{p1}}Hot Questions</a>
+    </div>
+    <div class="col-8">
+
+        <a class="sec_title" href="#"> New questions</a>
+
+    </div>
+</div>
+
+<!-- question sector-->
+<div class="row mt-3">
+    {% for question in questions %}
+    {% include 'components/soloquestiontemplate.html' %}
+    {% endfor %}
+
+
+</div>
+{% endblock %}
