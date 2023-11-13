@@ -22,7 +22,7 @@ from django.urls import reverse
 urlpatterns = [
     path('', views.mainpage, name='mainpage'),
     path('admin/', admin.site.urls),
-    path('hot', views.hotquestions, name='hotquestion'),
+    path('hot', views.hotquestions, name='hotquestions'),
     path('tag/<tag_name>',views.tagpage, name='tagpage'),#TODO
     path('question/<int:question_id>', views.onequest, name='onequestion'),#TODO
     path('login', views.login, name='login'),

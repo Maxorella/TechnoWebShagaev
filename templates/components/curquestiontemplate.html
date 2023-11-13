@@ -28,7 +28,7 @@
         <div class="col-10">
             <div class="row">
                 <!--sam vopros-->
-                <a class="text-center  quest_name" href="/question/{{question.id}}">{{question.title}}</a>
+                <a class="text-center  quest_name" href="{% url 'onequestion' question_id=question.id %} ">{{question.title}}</a>
             </div>
 
             <div class="row sect-text">

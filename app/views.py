@@ -20,6 +20,23 @@ ANSWERS = [
     } for i in range(20)
 ]
 def paginate(objects, page, per_page=15):
+
+    if (page is None):
+        page=1
+
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
+    except NameError:
+        page = 1
+    if (page<1):
+        page=1
+
+    if ((page*per_page-per_page) > len(QUESTIONS)):
+        page=1 #TODO: что делать если за пределами списка вопросов?
+
+
     paginator = Paginator(objects, per_page)
     return paginator.page(page)
 
@@ -30,30 +47,16 @@ def paginate(objects, page, per_page=15):
 
 
 def mainpage(request):# новые вопросы на mainpage
-    p1 = request.GET.get('p1')
-    page_items = paginate(QUESTIONS,2,4).object_list
+    pagenum = request.GET.get('pagenum')
+    per_page = 3
+    page_items = paginate(QUESTIONS,pagenum,per_page).object_list
 
-    return render(request, 'mainpage.html', {'questions': page_items, 'p1':p1})
+    return render(request, 'mainpage.html', {'questions': page_items, 'p1':pagenum})
 
 
 def tagpage(request, tag_name):  # hotlist
     pagenum = request.GET.get('pagenum')
-
-    if (pagenum is None):
-        pagenum=1
-
-    try:
-        pagenum = int(pagenum)
-    except ValueError:
-        pagenum = 1
-    except NameError:
-        pagenum = 1
-    if (pagenum<1):
-        pagenum=1
-
     per_page=3
-    if ((pagenum*per_page-per_page) > len(QUESTIONS)):
-        pagenum=1 #TODO: что делать если за пределами списка вопросов?
     page_items = paginate(QUESTIONS, pagenum, per_page).object_list
     return render(request, 'tag.html', {'tag': tag_name, 'questions': page_items})
 
@@ -73,20 +76,7 @@ def signup(request):
     return render(request, 'register.html')
 
 def hotquestions(request):
-    pagenum = request.GET.get('pagenum')
-
-    if (pagenum is None):
-        pagenum = 1
-
-    try:
-        pagenum = int(pagenum)
-    except ValueError:
-        pagenum = 1
-    except NameError:
-        pagenum = 1
-    if (pagenum < 1):
-        pagenum = 1
-
+    pagenum = int(request.GET.get('pagenum'))
     per_page = 3
     if ((pagenum * per_page - per_page) > len(QUESTIONS)):
         pagenum = 1  # TODO: что делать если за пределами списка вопросов?

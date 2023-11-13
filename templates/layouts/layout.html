@@ -22,11 +22,11 @@
     <!-- Custom styles for this template -->
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <header>
     <!-- Fixed navbar -->
-    {% include 'components/navbar.html' %}
+    {% include 'components/guestnavbar.html' %}
 </header>
 
 <!-- Begin page content -->
@@ -45,11 +45,9 @@
     </div>
 </main>
 
-<footer class="footer">
-    <div class="container">
-        <span class="text-muted">Created by Maxorella</span>
-    </div>
-</footer>
+
+{% include 'components/footer.html' %}
+
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
