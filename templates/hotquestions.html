@@ -2,11 +2,11 @@
 {% block content %}
 <div class="row mt-5">
     <div class="col-4">
-        <a href="#" class="title-text"> {{p1}}Hot Questions</a>
+        <a href="{% url 'hotquestions' %}" class="title-text">Hot Questions</a>
     </div>
     <div class="col-8">
 
-        <a class="sec_title" href="#"> New questions</a>
+        <a class="sec_title" href="{% url 'mainpage' %}"> New questions</a>
 
     </div>
 </div>

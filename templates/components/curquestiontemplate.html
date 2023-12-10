@@ -15,7 +15,7 @@
                 </div>
                 <div class="col-9 mt-4">
                     <!--как выравнивать текст?? -->
-                    <span class="text-center">2232</span>
+                    <span class="text-center">{{question.rating}}</span>
                 </div>
                 <div class="col-3">
                     <button type="button" class="btn btn-outline-danger btn-sm">
@@ -28,19 +28,20 @@
         <div class="col-10">
             <div class="row">
                 <!--sam vopros-->
-                <a class="text-center  quest_name" href="{% url 'onequestion' question_id=question.id %} ">{{question.title}}</a>
+                <a class="text-center  quest_name" href="{% url 'onequestion' question.id %} ">{{question.title}}</a>
             </div>
 
             <div class="row sect-text">
                 <!--sam vopros-->
-                <span> {{question.content}} </span>
+                <span> {{question.text}} </span>
             </div>
 
             <div class="row">
                 <div class="container-fluid">
                     <span class=" tags-st">Tags: </span>
-                    <a href="#" class="quest-tag"> tag1</a> <a href="#" class="quest-tag"> tag2</a> <a
-                        href="#" class="quest-tag"> tag3</a>
+                    {% for tag in question.tags.all %}
+                        <a href="{% url 'tagpage' tag.name %}" class="quest-tag"> {{tag.name}}</a>
+                    {% endfor %}
                 </div>
             </div>
 

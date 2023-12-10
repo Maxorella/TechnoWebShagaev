@@ -1,30 +1,18 @@
 <div class="row mt-5">
     <a class="text-center title-text" href="#">Popular tags</a>
     <div class="container-fluid sect-text">
-        <a class="quest-tag" href="#">doka2</a> <a class="quest-tag" href="#">gege</a> <a class="quest-tag"
-                                                                                          href="#">lol</a>
-        <a class="quest-tag" href="#">meme</a>
-        <a class="quest-tag" href="#">css</a> <a class="quest-tag" href="#">factorio</a> <a
-            class="quest-tag" href="#">love</a>
-        <a class="quest-tag" href="#">wtf </a>
-
+        {% for tag in poptags %}
+                <a href="{% url 'tagpage' tag.name %}" class="quest-tag"> {{tag.name}}</a>
+        {% endfor %}
     </div>
 </div>
 <div class="row mt-5">
     <a class="text-center title-text" href="#">Best members</a>
     <div class="sect-text">
-
-        <div class="row">
-            <a class="best_user" href="#">Maxorella</a>
-        </div>
-
-        <div class="row">
-            <a class="best_user" href="#">YatoroGod</a>
-        </div>
-
-        <div class="row">
-            <a class="best_user" href="#">AnotherUser</a>
-        </div>
-
+        {% for prof in popprof %}
+            <div class="row">
+                <a href="#" class="best_user"> {{prof.user.username}}</a>
+            </div>
+        {% endfor %}
     </div>
 </div>

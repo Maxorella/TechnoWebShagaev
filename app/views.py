@@ -2,43 +2,28 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 import random
-
+from .models import Question, Answer, Tag, Profile
 # Create your views here.
-QUESTIONS = [
-    {
-        'id': i,
-        'title': f'Question{i}',
-        'content': f'Lorem ispum {i}'
-    } for i in range(20)
-]
 
-ANSWERS = [
-    {
-        'id': i,
-        'title': f'Answer{i}',
-        'content': f'Lorem ispum {i}'
-    } for i in range(20)
-]
-def paginate(objects, page, per_page=15):
-
-    if (page is None):
-        page=1
-
+def paginate(objects_list,request, per_page=3): #TODO как вернуть текущий номер страницы
+    #TODO paginator.num_pages - возвращает сколько ВСЕГО страниц
     try:
-        page = int(page)
+        pagenum = request.GET.get('p')
+    except:
+        pagenum=1
+    if (pagenum is None):
+        pagenum=1
+    try:
+        pagenum = int(pagenum)
     except ValueError:
-        page = 1
+        pagenum = 1
     except NameError:
-        page = 1
-    if (page<1):
-        page=1
+        pagenum = 1
+    if (pagenum<1):
+        pagenum=1
+    paginator = Paginator(objects_list, per_page)
 
-    if ((page*per_page-per_page) > len(QUESTIONS)):
-        page=1 #TODO: что делать если за пределами списка вопросов?
-
-
-    paginator = Paginator(objects, per_page)
-    return paginator.page(page)
+    return (paginator.page(pagenum),pagenum)
 
 
 #def hotquestion(request, question_id): # конкр вопрос
@@ -47,25 +32,35 @@ def paginate(objects, page, per_page=15):
 
 
 def mainpage(request):# новые вопросы на mainpage
-    pagenum = request.GET.get('pagenum')
-    per_page = 3
-    page_items = paginate(QUESTIONS,pagenum,per_page).object_list
-
-    return render(request, 'mainpage.html', {'questions': page_items, 'p1':pagenum})
+    q = Question.objects.NewQuestions()
+    popt = Tag.objects.Popular()[0:5]
+    popprof= Profile.objects.Popular()[0:5]
+    print(popprof)
+    page_items, pagenum = paginate(q,request)
+    page_items = page_items.object_list
+    return render(request, 'mainpage.html', {'poptags':popt,'popprof': popprof, 'questions': page_items})
+    #TODO передавать номер страницы
 
 
 def tagpage(request, tag_name):  # hotlist
-    pagenum = request.GET.get('pagenum')
-    per_page=3
-    page_items = paginate(QUESTIONS, pagenum, per_page).object_list
-    return render(request, 'tag.html', {'tag': tag_name, 'questions': page_items})
+    q = Question.objects.filter(tags__name=tag_name).order_by('-creation_date')
+    popt = Tag.objects.Popular()[0:5]
+    popprof = Profile.objects.Popular()[0:5]
+    page_items, pagenum = paginate(q,request)
+    page_items = page_items.object_list
+    return render(request, 'tag.html', {'poptags':popt,'popprof': popprof,'tag': tag_name, 'questions': page_items})
+    #TODO передавать номер страницы
 
 
 def onequest(request,  question_id): # конкр вопрос
-    item = QUESTIONS[question_id]
-    answer_n = random.randint(0,len(ANSWERS))
-    answ_items = ANSWERS[answer_n:answer_n+2] #TODO сделать выборку с базы
-    return render(request, 'question.html', {'question': item, 'answers': answ_items})
+    que=Question.objects.filter(id=question_id)
+    ans=Answer.objects.filter(question_id=question_id).order_by('-creation_date')
+    answ_items, pagenum=paginate(ans, request)
+    popt = Tag.objects.Popular()[0:5]
+    popprof = Profile.objects.Popular()[0:5]
+    return render(request, 'question.html', {'poptags':popt,'popprof': popprof,
+                                             'question': que.first(), 'answers': answ_items})
+    #TODO передавать номер страницы
 
 
 def login(request):
@@ -76,12 +71,15 @@ def signup(request):
     return render(request, 'register.html')
 
 def hotquestions(request):
-    pagenum = int(request.GET.get('pagenum'))
-    per_page = 3
-    if ((pagenum * per_page - per_page) > len(QUESTIONS)):
-        pagenum = 1  # TODO: что делать если за пределами списка вопросов?
-    page_items = paginate(QUESTIONS, pagenum, per_page).object_list
-    return render(request, 'hotquestions.html',{'questions': page_items})
+    # TODO: что делать если за пределами списка вопросов?
+    q = Question.objects.HotQuestions()
+    popt = Tag.objects.Popular()[0:5]
+    popprof = Profile.objects.Popular()[0:5]
+    page_items, pagenum = paginate(q, request)
+    page_items = page_items.object_list
+
+    return render(request, 'hotquestions.html',{'poptags':popt,'popprof': popprof,
+                                             'questions': page_items})
 
 def askquestion(request):
     return render(request, 'ask.html')
