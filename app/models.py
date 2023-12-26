@@ -1,81 +1,106 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count
-
-class MyQuerySet(models.QuerySet):
-    def published(self):
-        return self.filter(tags_name='Movies') # пример
-    pass
+from django.db.models import Count, Q
 
 
 class QuestionManager(models.Manager):
-    def HotQuestions(self):
-        return  self.order_by('-rating') #первыми идут самые популярные
-        #self.filter(quest_profiles_liked)
-    def NewQuestions(self):
-        return  self.order_by('-creation_date')
+    def new_questions(self):
+        return self.annotate(
+            rating=Count('likequestion__like', filter=Q(likequestion__like=True)) -
+                   Count('likequestion__like', filter=Q(likequestion__like=False))
+        ).order_by('-creation_date')
 
-    def Bytag(self, tag_name):
-        return  self.filter(tags__name=tag_name).order_by('rating')
+    def by_tag(self, tag_name):
+        return self.filter(tags__name=tag_name).annotate(
+            rating=Count('likequestion__like', filter=Q(likequestion__like=True)) -
+                   Count('likequestion__like', filter=Q(likequestion__like=False))
+        ).order_by('-creation_date')
+
+    def hot_questions(self):
+        return self.annotate(
+            rating=Count('likequestion__like', filter=Q(likequestion__like=True)) -
+                   Count('likequestion__like', filter=Q(likequestion__like=False))
+        ).order_by('-rating')
+    def question_rating(self, question_id):
+        return self.filter(pk=question_id).annotate(
+            rating=Count('likequestion__like', filter=Q(likequestion__like=True)) -
+                   Count('likequestion__like', filter=Q(likequestion__like=False))
+        )
+
 
 class TagManager(models.Manager):
-    def Popular(self):
+    def popular(self):
         return self.annotate(question_count=Count('question'),
                              answer_count=Count('answer')).order_by('-question_count', '-answer_count')
+
 
 class ProfileManager(models.Manager):
-    def Popular(self):
+    def popular(self):
         return self.annotate(question_count=Count('question'),
                              answer_count=Count('answer')).order_by('-question_count', '-answer_count')
 
-class AnswerManager(models.Manager):
-    def ByDate(self):
-        return self.order_by('-creation_date')
 
-# Create your models here.
+
+
+class AnswerManager(models.Manager):
+    def by_date(self, question_id):
+        return self.filter(question_id).order_by('-creation_date')
+
+
+    def answer_rating(self, question_id):
+        return self.filter(question_id=question_id).annotate(
+            rating=Count('likeanswer__like', filter=Q(likeanswer__like=True)) -
+                   Count('likeanswer__like', filter=Q(likeanswer__like=False))
+        ).order_by('-creation_date')
+
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    #email = models.CharField(max_length=40)
-    #real_name = models.CharField(max_length=30)
-    avatar = models.CharField(max_length=50, null=True, blank=True)  # хранит путь до аватарки
+    avatar = models.ImageField(max_length=255, null=True, blank=True)  # хранит путь до аватарки
     is_deleted = models.BooleanField(default=False)
     objects = ProfileManager()
 
     def __str__(self):
         return f'{self.user.username}'
 
+
 class Question(models.Model):
-    author = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True)  # если удалён то null(а вообще по is_deleted лучше смотреть)
+    author = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True)  # если удалён то null(по is_deleted лучше смотреть)
     tags = models.ManyToManyField('Tag')
-    title = models.CharField(max_length=50)
-    text = models.CharField(max_length=300)
-    liked = models.ManyToManyField('Profile', related_name='quest_profiles_liked')
-    disliked = models.ManyToManyField('Profile', related_name='quest_profiles_disliked')
-    rating = models.IntegerField()
+    title = models.CharField(max_length=255)
+    text = models.CharField(max_length=255)
     creation_date = models.DateTimeField(null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
+    is_correct = models.BooleanField(default=False)
     objects = QuestionManager()
 
     def __str__(self):
         return f'{self.title}'
 class Answer(models.Model):
-    author = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True)  #если удалён то null(а вообще по is_deleted лучше смотреть)
+    author = models.ForeignKey('Profile', on_delete=models.SET_NULL, null=True)  #если удалён то null(по is_deleted лучше смотреть)
     question = models.ForeignKey('Question', null=True, on_delete=models.SET_NULL)
     tags = models.ManyToManyField('Tag')
-    title = models.CharField(max_length=50)
-    text = models.CharField(max_length=300)
-    liked = models.ManyToManyField('Profile', related_name='answ_profiles_liked')
-    disliked = models.ManyToManyField('Profile',related_name='answ_profiles_disliked')
-    rating = models.IntegerField()
+    title = models.CharField(max_length=255)
+    text = models.CharField(max_length=255)
     creation_date = models.DateTimeField()
     correct = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     objects = AnswerManager()
-
     def __str__(self):
         return f'{self.title}'
+
+class LikeQuestion(models.Model):
+    like = models.BooleanField(null=True)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+
+class LikeAnswer(models.Model):
+    like = models.BooleanField(null=True)
+    answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+
+
 class Tag(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=255)
     objects = TagManager()
 
     def __str__(self):

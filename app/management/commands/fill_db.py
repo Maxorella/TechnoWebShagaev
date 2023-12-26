@@ -3,7 +3,7 @@ from django.core.management import BaseCommand
 from faker import Faker
 from django.contrib.auth.models import User
 import random
-from app.models import Profile, Question, Answer,  Tag
+from app.models import Profile, Question, Answer,  Tag, LikeQuestion, LikeAnswer
 fake = Faker()#.name()
 
 class Command(BaseCommand):
@@ -17,36 +17,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs): # сама обработка команды
         num = kwargs['ratio'] #взять количество данных
-        print()
-        #num = 10
-        #$for i in range(num):
 
-        #  for _ in range(5):
-        ##
-        #users = [
-        #    User(
-        #        username=fake.unique.user_name(), first_name=fake.first_name(),
-        #        last_name=fake.last_name(), email=fake.email(), password=fake.password(),
-        #        date_joined =fake.date_between(start_date='-10y',end_date='-1d')
-        ##    ) for i in range(num)
-        ##]
-        users =[]
-        for i in range(num):
-            user = User.objects.create_user(
+        users =[
+            User.objects.create_user(
                 username=fake.unique.user_name(),
                 first_name=fake.first_name(),
                 last_name=fake.last_name(),
                 email=fake.email(),
-                password='your_password_here',  # Замените 'your_password_here' на желаемый пароль
+                password=fake.password(),  # Замените 'your_password_here' на желаемый пароль
                 date_joined=fake.date_between(start_date='-10y', end_date='-1d')
-            ) #TODO рэйтинг пользователя
-            #user.save()
-            users.append(user)
+            ) for i in range(num)
+        ]
+
+       # user_l = User.objects.bulk_create(users)
 
 
 
-
-        #user_l = User.objects.bulk_create(users)
 
         profiles = [
             Profile(
@@ -70,13 +56,14 @@ class Command(BaseCommand):
         questions = [
             Question(
                 author=random.choice(profiles), title = fake.paragraph(nb_sentences=2),
-                text =  fake.sentence(nb_words=20), rating=0,
+                text =  fake.sentence(nb_words=20),
                 creation_date = fake.date_between(start_date='-10y',end_date='-1d'),
                 is_deleted = False
             )for i in range(10*num)
         ]
 
         questions_l = Question.objects.bulk_create(questions)
+
 
 
         for i in range(10*num): # добавление тэгов к вопросу
@@ -87,36 +74,35 @@ class Command(BaseCommand):
                 if tagtoad in tagl:
                     continue
                 tagl.append(tagtoad)
-                questions_l[i].tags.add(tagtoad)
+                questions[i].tags.add(tagtoad)
 
-            #лайки к вопросу
-            rating=0
-            for j in range(random.randint(3,10)): #лайки
-                toad=random.choice(profiles)
-                if toad in profl:
-                    continue
-                if random.randint(0,1):
-                    questions_l[i].liked.add(toad)
-                    rating+=1
-                else:
-                    questions_l[i].disliked.add(toad)
-                    rating-=1
-                profl.append(toad)
-            questions_l[i].rating = rating
 
-        for q in questions_l:
-            q.save()
+
+        likes_quest=[]
+        count=0
+        for prof in profiles:
+            checker = list()
+            for i in range(0,100,1):
+                ques_n=random.choice(questions)
+                if  not (ques_n in checker):
+                    likes_quest.append(LikeQuestion(profile=prof, question=ques_n, like=fake.pybool()))
+                    checker.append(ques_n)
+
+
+        likes_question_l = LikeQuestion.objects.bulk_create(likes_quest)
 
         answers = [
             Answer(
                 author = random.choice(profiles), question = random.choice(questions),
-                title = fake.paragraph(nb_sentences=2), text =  fake.sentence(nb_words=20), rating=0,
+                title = fake.paragraph(nb_sentences=2), text =  fake.sentence(nb_words=20),
                 creation_date = fake.date_between(start_date='-10y', end_date='-1d'),
                 correct = fake.pybool(), is_deleted=False
             ) for i in range(100*num)
         ]
 
+
         answers_l = Answer.objects.bulk_create(answers)
+
 
         for i in range(100*num): # добавление тэгов к ответу
             profl=[]
@@ -126,23 +112,27 @@ class Command(BaseCommand):
                 if tagtoad in tagl:
                     continue
                 tagl.append(tagtoad)
-                answers_l[i].tags.add(tagtoad)
-            rating=0
-            #лайки к вопросу
-            for j in range(random.randint(3,10)): #лайки
-                toad=random.choice(profiles)
-                if toad in profl:
-                    continue
-                if random.randint(0,1):
-                    answers_l[i].liked.add(toad)
-                    rating+=1
-                else:
-                    answers_l[i].disliked.add(toad)
-                    rating-=1
-                profl.append(toad)
-            answers_l[i].rating = rating
+                answers[i].tags.add(tagtoad)
 
-        #for a in answers_l:
-        ##    a.save()
+
+
+
+        likes_answ = []
+        count = 0
+        for prof in profiles:
+            checker = list()
+            for i in range(0, 100, 1):
+                answ_n = random.choice(answers)
+                if not (answ_n in checker):
+                    likes_answ.append(LikeAnswer(profile=prof, answer=answ_n, like=fake.pybool()))
+                    checker.append(answ_n)
+
+
+
+
+
+
+
+        likes_answer_l = LikeAnswer.objects.bulk_create(likes_answ)
 
 
