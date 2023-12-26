@@ -14,9 +14,10 @@
 <!-- question sector-->
 <div class="row mt-3">
     {% for question in questions %}
-    {% include 'components/soloquestiontemplate.html' %}
+    {% include 'components/question_top.html' %}
     {% endfor %}
 
+    {% include 'components/pagination.html' %}
 
 </div>
 {% endblock %}

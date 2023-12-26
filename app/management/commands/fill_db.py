@@ -22,16 +22,31 @@ class Command(BaseCommand):
         #$for i in range(num):
 
         #  for _ in range(5):
-        ###TODO пароль не заполняется?
-        users = [
-            User(
-                username=fake.unique.user_name(), first_name=fake.first_name(),
-                last_name=fake.last_name(), email=fake.email(), password=fake.password(),
-                date_joined =fake.date_between(start_date='-10y',end_date='-1d')
-            ) for i in range(num)
-        ]
+        ##
+        #users = [
+        #    User(
+        #        username=fake.unique.user_name(), first_name=fake.first_name(),
+        #        last_name=fake.last_name(), email=fake.email(), password=fake.password(),
+        #        date_joined =fake.date_between(start_date='-10y',end_date='-1d')
+        ##    ) for i in range(num)
+        ##]
+        users =[]
+        for i in range(num):
+            user = User.objects.create_user(
+                username=fake.unique.user_name(),
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                email=fake.email(),
+                password='your_password_here',  # Замените 'your_password_here' на желаемый пароль
+                date_joined=fake.date_between(start_date='-10y', end_date='-1d')
+            ) #TODO рэйтинг пользователя
+            #user.save()
+            users.append(user)
 
-        user_l = User.objects.bulk_create(users)
+
+
+
+        #user_l = User.objects.bulk_create(users)
 
         profiles = [
             Profile(
@@ -127,7 +142,7 @@ class Command(BaseCommand):
                 profl.append(toad)
             answers_l[i].rating = rating
 
-        for a in answers_l:
-            a.save()
+        #for a in answers_l:
+        ##    a.save()
 
 

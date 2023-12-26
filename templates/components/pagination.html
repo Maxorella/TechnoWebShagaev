@@ -1,23 +1,27 @@
 <div class="row mt-3">
     <div class="d-flex justify-content-center">
-
         <nav aria-label="Page navigation example">
             <ul class="pagination">
+                {% if page_items.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
+                    <a class="page-link" href="?p=1" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                {% endif %}
+                {% for num in page_range %}
+                    <li class="page-item{% if page_items.number == num %} active{% endif %}">
+                        <a class="page-link" href="?p={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                {% if page_items.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
+                    <a class="page-link" href="?p={{ page_items.paginator.num_pages }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
-
 </div>

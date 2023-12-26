@@ -5,11 +5,11 @@
     <div class="row mt-5">
     </div>
 
-    {% include 'components/curquestiontemplate.html' %}
+    {% include 'components/cur_question.html' %}
 
 
     {% for answer in answers %}
-    {% include 'components/soloanswertemplate.html' %}
+    {% include 'components/one_answer.html' %}
     {% endfor %}
     {% include 'components/pagination.html' %}
 
