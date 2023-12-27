@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
+from django.utils import timezone  # Import timezone module
 
 
 class QuestionManager(models.Manager):
@@ -54,9 +55,9 @@ class AnswerManager(models.Manager):
         ).order_by('-creation_date')
 
 class Profile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
-    avatar = models.ImageField(max_length=255, null=True, blank=True)  # хранит путь до аватарки
-    is_deleted = models.BooleanField(default=False)
+    user = models.OneToOneField(User,on_delete=models.CASCADE, unique=True)
+    avatar = models.ImageField(upload_to='static/img/', null=True, blank=True)  # хранит путь до аватарки
+    #is_deleted = models.BooleanField(default=False)
     objects = ProfileManager()
 
     def __str__(self):
@@ -73,6 +74,11 @@ class Question(models.Model):
     is_correct = models.BooleanField(default=False)
     objects = QuestionManager()
 
+    def save(self, *args, **kwargs):
+        if not self.creation_date:
+            self.creation_date = timezone.now()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.title}'
 class Answer(models.Model):
@@ -87,6 +93,10 @@ class Answer(models.Model):
     objects = AnswerManager()
     def __str__(self):
         return f'{self.title}'
+    def save(self, *args, **kwargs):
+        if not self.creation_date:
+            self.creation_date = timezone.now()
+        super().save(*args, **kwargs)
 
 class LikeQuestion(models.Model):
     like = models.BooleanField(null=True)

@@ -22,7 +22,7 @@
                 </li>
                 <li class="nav-item">
                     <!--добавить ссылку-->
-                    <a class="nav-link active" href="#">"Your name"</a>
+                    <a class="nav-link active" href="#">{{ user.username }}</a>
                 </li>
                 <li class="nav-item navbar-text">
                     <!--добавить ссылку-->
@@ -30,7 +30,7 @@
                 </li>
                 <li class="nav-item">
                     <!--добавить ссылку-->
-                    <a class="nav-link active" href="#">log out</a>
+                    <a class="nav-link active" href="{% url 'logout' %}">log out</a>
                 </li>
             </ul>
 

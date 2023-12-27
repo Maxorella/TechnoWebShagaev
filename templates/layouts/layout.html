@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
 
     <title>ask_me</title>
 
@@ -25,16 +24,19 @@
 <body class="d-flex flex-column min-vh-100">
 
 <header>
-    <!-- Fixed navbar -->
+    {% if user.is_authenticated %}
     {% include 'components/navbar.html' %}
+    {% else %}
+    {% include 'components/guest_navbar.html' %}
+    {% endif %}
 </header>
 
 <!-- Begin page content -->
 <main role="main" class="container">
     <div class="row mt-4">
         <div class="col-9">
-          {% block content %}
-          {% endblock %}
+            {% block content %}
+            {% endblock %}
         </div>
 
 
