@@ -56,7 +56,7 @@ class AnswerManager(models.Manager):
 
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE, unique=True)
-    avatar = models.ImageField(upload_to='static/img/', null=True, blank=True)  # хранит путь до аватарки
+    avatar = models.ImageField(upload_to='avatar/%Y/%m/%d', default="avatar.jpeg", null=True, blank=True)  # хранит путь до аватарки
     #is_deleted = models.BooleanField(default=False)
     objects = ProfileManager()
 

@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
         profiles = [
             Profile(
-                user = users[i], avatar = f'/static/img/{users[i].username}',
+                user = users[i],
                 is_deleted=False
             ) for i in range(num)
         ]
